@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import PlatformDatePicker from "../../src/components/PlatformDatePicker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -285,7 +285,7 @@ export default function ClassEditScreen() {
                 </Pressable>
 
                 {metaDatePicker && (
-                  <DateTimePicker
+                  <PlatformDatePicker
                     value={isoToDate(metaDateISO || cls.date)}
                     mode="date"
                     maximumDate={new Date()}

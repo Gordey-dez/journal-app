@@ -13,6 +13,11 @@
     <title>%WEB_TITLE%</title>
     <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
     <style id="expo-reset">
+      /* Стабильный масштаб текста в мобильных браузерах (без лишнего «увеличения») */
+      html {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
       /* These styles make the body full-height */
       html,
       body {

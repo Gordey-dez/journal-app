@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import PlatformDatePicker from "../../src/components/PlatformDatePicker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {
@@ -352,7 +352,7 @@ export default function StudentStatsScreen() {
 
         {/* Date picker */}
         {pickerMode && (
-          <DateTimePicker
+          <PlatformDatePicker
             value={isoToDate((pickerMode === "from" ? fromISO : toISO) ?? toISODateLocal(new Date()))}
             mode="date"
             maximumDate={new Date()}

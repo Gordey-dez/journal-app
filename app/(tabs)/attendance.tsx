@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import PlatformDatePicker from "../../src/components/PlatformDatePicker";
 import * as Haptics from "expo-haptics";
 import * as Updates from "expo-updates";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -364,7 +364,7 @@ export default function AttendanceTab() {
                 <Text style={styles.weekdayHint}>{weekdayLabel(weekdayFromISO(dateISO))}</Text>
 
                 {showDatePicker && (
-                  <DateTimePicker
+                  <PlatformDatePicker
                     value={isoToDate(dateISO)}
                     mode="date"
                     maximumDate={new Date()}

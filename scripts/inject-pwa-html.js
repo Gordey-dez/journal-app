@@ -8,7 +8,7 @@ const path = require("path");
 const root = path.join(__dirname, "..");
 const dist = path.join(root, "dist");
 const marker = "<!--expo-pwa-->";
-const headSnippet = `${marker}<link rel="manifest" href="/manifest.json"/><meta name="theme-color" content="#000000"/><meta name="mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/><link rel="apple-touch-icon" href="/pwa-icon.png"/>`;
+const headSnippet = `${marker}<style id="pwa-text-adjust">html{-webkit-text-size-adjust:100%;text-size-adjust:100%}</style><link rel="manifest" href="/manifest.json"/><meta name="theme-color" content="#000000"/><meta name="mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/><link rel="apple-touch-icon" href="/pwa-icon.png"/>`;
 const bodySnippet = `<script>if('serviceWorker'in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}</script>`;
 
 function walk(dir, out = []) {
