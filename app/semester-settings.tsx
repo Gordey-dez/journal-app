@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import PlatformDatePicker from "../src/components/PlatformDatePicker";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -180,7 +180,7 @@ export default function SemesterSettingsScreen() {
         <FlatList
           data={draft}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ paddingBottom: 148 }}
+          contentContainerStyle={{ paddingBottom: 100 }}
           renderItem={({ item }) => {
             const count = classes.filter((c) => dateInSemester(c.date, item))
               .length;
@@ -284,7 +284,7 @@ export default function SemesterSettingsScreen() {
         />
 
         {pickerFor && (
-          <PlatformDatePicker
+          <DateTimePicker
             value={isoToDate(
               pickerFor.field === "start"
                 ? draft.find((s) => s.id === pickerFor.id)?.startDate ?? ""

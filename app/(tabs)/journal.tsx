@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import PlatformDatePicker from "../../src/components/PlatformDatePicker";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
 import { Link } from "expo-router";
@@ -188,7 +188,7 @@ export default function JournalTab() {
 
         {/* Date picker */}
         {showDatePicker && pickerTarget && (
-          <PlatformDatePicker
+          <DateTimePicker
             value={isoToDate(
               (pickerTarget === "single" ? dateISO : pickerTarget === "from" ? fromISO : toISO) ??
                 toISODateLocal(new Date())

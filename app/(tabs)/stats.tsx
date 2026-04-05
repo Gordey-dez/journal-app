@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import PlatformDatePicker from "../../src/components/PlatformDatePicker";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
@@ -329,7 +329,7 @@ export default function StatsTab() {
 
         {/* Date picker */}
         {pickerMode && (
-          <PlatformDatePicker
+          <DateTimePicker
             value={isoToDate((pickerMode === "from" ? fromISO : toISO) ?? toISODateLocal(new Date()))}
             mode="date"
             maximumDate={new Date()}
