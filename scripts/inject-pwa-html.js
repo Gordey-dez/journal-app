@@ -26,21 +26,38 @@ if (!fs.existsSync(dist)) {
 }
 
 const files = walk(dist);
-let n = 0;
+let injected = 0;
+let viewportFixed = 0;
 for (const file of files) {
-  let html = fs.readFileSync(file, "utf8");
-  if (html.includes(marker)) continue;
-  if (!html.includes("<head>")) {
-    console.warn("inject-pwa-html: skip (no <head>)", path.relative(root, file));
-    continue;
+  const original = fs.readFileSync(file, "utf8");
+  let html = original;
+  const beforeVp = html;
+  html = html.replace(
+    /name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/g,
+    'name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"'
+  );
+  if (html !== beforeVp) viewportFixed++;
+
+  if (!html.includes(marker)) {
+    if (!html.includes("<head>")) {
+      console.warn("inject-pwa-html: skip PWA inject (no <head>)", path.relative(root, file));
+    } else if (!html.includes("</body>")) {
+      console.warn("inject-pwa-html: skip PWA inject (no </body>)", path.relative(root, file));
+    } else {
+      html = html.replace("<head>", `<head>${headSnippet}`);
+      html = html.replace("</body>", `${bodySnippet}</body>`);
+      injected++;
+    }
   }
-  html = html.replace("<head>", `<head>${headSnippet}`);
-  if (!html.includes("</body>")) {
-    console.warn("inject-pwa-html: skip (no </body>)", path.relative(root, file));
-    continue;
+
+  if (html !== original) {
+    fs.writeFileSync(file, html);
   }
-  html = html.replace("</body>", `${bodySnippet}</body>`);
-  fs.writeFileSync(file, html);
-  n++;
 }
-console.log("inject-pwa-html: updated", n, "file(s)");
+console.log(
+  "inject-pwa-html: PWA tags in",
+  injected,
+  "file(s); viewport normalized in",
+  viewportFixed,
+  "file(s)"
+);
