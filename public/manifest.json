@@ -1,0 +1,19 @@
+{
+  "name": "Журнал посещаемости",
+  "short_name": "Посещаемость",
+  "description": "Учёт посещаемости занятий",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/pwa-icon.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
