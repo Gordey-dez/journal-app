@@ -43,7 +43,7 @@ export default function PairSettingsScreen() {
   const { isReady, pairSettings, savePairSettings } = useAppData();
   const { confirm, toast } = useOverlay(); // Подключаем оверлеи
   const { width } = useWindowDimensions();
-  const isCompactWeb = Platform.OS === "web" && width < 420;
+  const isCompactWeb = Platform.OS === "web" && width < 768;
 
   const [draft, setDraft] = useState<PairSetting[]>(pairSettings);
 
@@ -256,11 +256,25 @@ const styles = StyleSheet.create({
   pairLabel: { color: colors.text, fontSize: 16, fontWeight: "700", marginBottom: 10 },
   pairLabelCompact: { fontSize: 14, marginBottom: 8 },
   row: { flexDirection: "row", alignItems: "center" },
-  timeInput: { flex: 1, backgroundColor: "#0f0f0f", borderRadius: 12, paddingHorizontal: 12, paddingVertical: 10, color: colors.text, borderWidth: 1, borderColor: "#222", textAlign: "center", fontSize: 16 },
+  timeInput: {
+    flexGrow: 1,
+    flexShrink: 1,
+    flexBasis: 0,
+    minWidth: 0,
+    backgroundColor: "#0f0f0f",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    color: colors.text,
+    borderWidth: 1,
+    borderColor: "#222",
+    textAlign: "center",
+    fontSize: 16,
+  },
   timeInputCompact: { paddingHorizontal: 10, paddingVertical: 8, fontSize: 14, borderRadius: 10 },
   dash: { color: colors.muted, marginHorizontal: 8, fontSize: 18 },
   dashCompact: { marginHorizontal: 6, fontSize: 16 },
-  trashBtn: { marginLeft: 10, padding: 6 },
+  trashBtn: { marginLeft: 10, padding: 6, flexShrink: 0 },
   bottomRow: { flexDirection: "row", gap: 10 },
   secondaryBtn: { flex: 1, backgroundColor: "#111", borderRadius: 14, paddingVertical: 14, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8, borderWidth: 1, borderColor: "#222" },
   secondaryText: { color: colors.text, fontWeight: "700" },
