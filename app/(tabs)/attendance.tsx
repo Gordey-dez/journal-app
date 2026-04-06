@@ -13,6 +13,7 @@ import {
   Text,
   TextInput,
   View,
+  Platform,
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -353,7 +354,29 @@ export default function AttendanceTab() {
               <ScrollView contentContainerStyle={{ paddingBottom: 16 }} keyboardShouldPersistTaps="handled">
                 <Text style={styles.sectionTitle}>Дата</Text>
                 <View style={styles.row}>
-                  <Pressable style={styles.inputLike} onPress={() => setShowDatePicker(true)} onPressIn={dismissSuggestions}>
+                  <Pressable
+                    style={styles.inputLike}
+                    onPress={() => {
+                      if (Platform.OS === "web") {
+                        const current = dateISO;
+                        const input = window.prompt(
+                          "Введите дату в формате ГГГГ-ММ-ДД",
+                          current || todayISO()
+                        );
+                        if (!input) return;
+                        const trimmed = input.trim();
+                        const isoPattern = /^\d{4}-\d{2}-\d{2}$/;
+                        if (!isoPattern.test(trimmed)) {
+                          alert("Неверный формат даты. Ожидается ГГГГ-ММ-ДД.");
+                          return;
+                        }
+                        setDateISO(trimmed);
+                        return;
+                      }
+                      setShowDatePicker(true);
+                    }}
+                    onPressIn={dismissSuggestions}
+                  >
                     <Ionicons name="calendar-outline" size={18} color={colors.muted} />
                     <Text style={styles.inputLikeText}>{formatRuDate(dateISO)}</Text>
                   </Pressable>
@@ -363,7 +386,7 @@ export default function AttendanceTab() {
                 </View>
                 <Text style={styles.weekdayHint}>{weekdayLabel(weekdayFromISO(dateISO))}</Text>
 
-                {showDatePicker && (
+                {Platform.OS !== "web" && showDatePicker && (
                   <DateTimePicker
                     value={isoToDate(dateISO)}
                     mode="date"

@@ -4,7 +4,7 @@ import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
 import { Link } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, Text, TextInput, View, Platform } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RefreshControlThemed } from "../../src/components/RefreshControlThemed";
@@ -141,7 +141,29 @@ export default function JournalTab() {
             >
               <Text style={styles.chipText}>Сегодня</Text>
             </Pressable>
-            <Pressable style={styles.chip} onPress={() => { setPickerTarget("single"); setShowDatePicker(true); }}>
+            <Pressable
+              style={styles.chip}
+              onPress={() => {
+                if (Platform.OS === "web") {
+                  const current = dateISO ?? todayISO();
+                  const input = window.prompt(
+                    "Введите дату в формате ГГГГ-ММ-ДД",
+                    current
+                  );
+                  if (!input) return;
+                  const trimmed = input.trim();
+                  const isoPattern = /^\d{4}-\d{2}-\d{2}$/;
+                  if (!isoPattern.test(trimmed)) {
+                    alert("Неверный формат даты. Ожидается ГГГГ-ММ-ДД.");
+                    return;
+                  }
+                  setDateISO(trimmed);
+                  return;
+                }
+                setPickerTarget("single");
+                setShowDatePicker(true);
+              }}
+            >
               <Ionicons name="calendar-outline" size={16} color={colors.muted} />
               <Text style={styles.chipText} numberOfLines={1}>
                 {dateISO ? formatRuDate(dateISO) : "Выбрать дату"}
@@ -155,7 +177,30 @@ export default function JournalTab() {
           </View>
         ) : (
           <View style={styles.filtersRow}>
-            <Pressable style={styles.chip} onPress={() => { setPickerTarget("from"); setShowDatePicker(true); }}>
+            <Pressable
+              style={styles.chip}
+              onPress={() => {
+                if (Platform.OS === "web") {
+                  const current = fromISO ?? todayISO();
+                  const input = window.prompt(
+                    "Введите дату начала в формате ГГГГ-ММ-ДД",
+                    current
+                  );
+                  if (!input) return;
+                  const trimmed = input.trim();
+                  const isoPattern = /^\d{4}-\d{2}-\d{2}$/;
+                  if (!isoPattern.test(trimmed)) {
+                    alert("Неверный формат даты. Ожидается ГГГГ-ММ-ДД.");
+                    return;
+                  }
+                  setFromISO(trimmed);
+                  if (toISO && trimmed > toISO) setToISO(trimmed);
+                  return;
+                }
+                setPickerTarget("from");
+                setShowDatePicker(true);
+              }}
+            >
               <Ionicons name="calendar-outline" size={16} color={colors.muted} />
               <Text style={styles.chipText} numberOfLines={1}>
                 {fromISO ? formatRuDate(fromISO) : "С"}
@@ -166,7 +211,30 @@ export default function JournalTab() {
                 </Pressable>
               )}
             </Pressable>
-            <Pressable style={styles.chip} onPress={() => { setPickerTarget("to"); setShowDatePicker(true); }}>
+            <Pressable
+              style={styles.chip}
+              onPress={() => {
+                if (Platform.OS === "web") {
+                  const current = toISO ?? fromISO ?? todayISO();
+                  const input = window.prompt(
+                    "Введите дату окончания в формате ГГГГ-ММ-ДД",
+                    current
+                  );
+                  if (!input) return;
+                  const trimmed = input.trim();
+                  const isoPattern = /^\d{4}-\d{2}-\d{2}$/;
+                  if (!isoPattern.test(trimmed)) {
+                    alert("Неверный формат даты. Ожидается ГГГГ-ММ-ДД.");
+                    return;
+                  }
+                  setToISO(trimmed);
+                  if (fromISO && trimmed < fromISO) setFromISO(trimmed);
+                  return;
+                }
+                setPickerTarget("to");
+                setShowDatePicker(true);
+              }}
+            >
               <Ionicons name="calendar-outline" size={16} color={colors.muted} />
               <Text style={styles.chipText} numberOfLines={1}>
                 {toISO ? formatRuDate(toISO) : "По"}
@@ -187,7 +255,7 @@ export default function JournalTab() {
         </View>
 
         {/* Date picker */}
-        {showDatePicker && pickerTarget && (
+        {Platform.OS !== "web" && showDatePicker && pickerTarget && (
           <DateTimePicker
             value={isoToDate(
               (pickerTarget === "single" ? dateISO : pickerTarget === "from" ? fromISO : toISO) ??

@@ -11,6 +11,7 @@ import {
   Text,
   TextInput,
   View,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -215,9 +216,26 @@ export default function SemesterSettingsScreen() {
                 <View style={styles.dateRow}>
                   <Pressable
                     style={styles.dateChip}
-                    onPress={() =>
-                      setPickerFor({ id: item.id, field: "start" })
-                    }
+                    onPress={() => {
+                      if (Platform.OS === "web") {
+                        const current =
+                          draft.find((s) => s.id === item.id)?.startDate ?? "";
+                        const input = window.prompt(
+                          "Дата начала семестра (ГГГГ-ММ-ДД)",
+                          current
+                        );
+                        if (!input) return;
+                        const trimmed = input.trim();
+                        const isoPattern = /^\d{4}-\d{2}-\d{2}$/;
+                        if (!isoPattern.test(trimmed)) {
+                          alert("Неверный формат даты. Ожидается ГГГГ-ММ-ДД.");
+                          return;
+                        }
+                        updateSemester(item.id, { startDate: trimmed });
+                        return;
+                      }
+                      setPickerFor({ id: item.id, field: "start" });
+                    }}
                   >
                     <Text style={styles.dateText}>
                       {formatRuDate(item.startDate)}
@@ -226,9 +244,26 @@ export default function SemesterSettingsScreen() {
                   <Text style={styles.dash}>—</Text>
                   <Pressable
                     style={styles.dateChip}
-                    onPress={() =>
-                      setPickerFor({ id: item.id, field: "end" })
-                    }
+                    onPress={() => {
+                      if (Platform.OS === "web") {
+                        const current =
+                          draft.find((s) => s.id === item.id)?.endDate ?? "";
+                        const input = window.prompt(
+                          "Дата конца семестра (ГГГГ-ММ-ДД)",
+                          current
+                        );
+                        if (!input) return;
+                        const trimmed = input.trim();
+                        const isoPattern = /^\d{4}-\d{2}-\d{2}$/;
+                        if (!isoPattern.test(trimmed)) {
+                          alert("Неверный формат даты. Ожидается ГГГГ-ММ-ДД.");
+                          return;
+                        }
+                        updateSemester(item.id, { endDate: trimmed });
+                        return;
+                      }
+                      setPickerFor({ id: item.id, field: "end" });
+                    }}
                   >
                     <Text style={styles.dateText}>
                       {formatRuDate(item.endDate)}
@@ -283,7 +318,7 @@ export default function SemesterSettingsScreen() {
           }}
         />
 
-        {pickerFor && (
+        {Platform.OS !== "web" && pickerFor && (
           <DateTimePicker
             value={isoToDate(
               pickerFor.field === "start"

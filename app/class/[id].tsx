@@ -12,6 +12,7 @@ import {
   Text,
   TextInput,
   View,
+  Platform,
 } from "react-native";
 // в) Добавлен useFocusEffect
 import { useFocusEffect } from "@react-navigation/native";
@@ -276,7 +277,28 @@ export default function ClassEditScreen() {
                 />
 
                 <Text style={styles.fieldLabel}>Дата</Text>
-                <Pressable style={styles.inputLike} onPress={() => setMetaDatePicker(true)}>
+                <Pressable
+                  style={styles.inputLike}
+                  onPress={() => {
+                    if (Platform.OS === "web") {
+                      const current = metaDateISO || cls.date || todayISO();
+                      const input = window.prompt(
+                        "Введите дату в формате ГГГГ-ММ-ДД",
+                        current
+                      );
+                      if (!input) return;
+                      const trimmed = input.trim();
+                      const isoPattern = /^\d{4}-\d{2}-\d{2}$/;
+                      if (!isoPattern.test(trimmed)) {
+                        alert("Неверный формат даты. Ожидается ГГГГ-ММ-ДД.");
+                        return;
+                      }
+                      setMetaDateISO(trimmed);
+                      return;
+                    }
+                    setMetaDatePicker(true);
+                  }}
+                >
                   <Ionicons name="calendar-outline" size={18} color={colors.muted} />
                   <Text style={styles.inputLikeText}>{formatRuDate(metaDateISO)}</Text>
                 </Pressable>
@@ -284,7 +306,7 @@ export default function ClassEditScreen() {
                   <Text style={styles.todayBtnText}>Сегодня</Text>
                 </Pressable>
 
-                {metaDatePicker && (
+                {Platform.OS !== "web" && metaDatePicker && (
                   <DateTimePicker
                     value={isoToDate(metaDateISO || cls.date)}
                     mode="date"

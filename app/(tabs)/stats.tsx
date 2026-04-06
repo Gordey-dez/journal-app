@@ -4,7 +4,7 @@ import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, Text, View, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ActionSheet } from "../../src/components/ActionSheet";
@@ -255,13 +255,57 @@ export default function StatsTab() {
       {filtersExpanded && (
         <>
           <View style={styles.row}>
-            <Pressable style={styles.filterBtn} onPress={() => setPickerMode("from")}>
+            <Pressable
+              style={styles.filterBtn}
+              onPress={() => {
+                if (Platform.OS === "web") {
+                  const current = fromISO ?? toISO ?? "";
+                  const input = window.prompt(
+                    "Введите дату начала в формате ГГГГ-ММ-ДД",
+                    current
+                  );
+                  if (!input) return;
+                  const trimmed = input.trim();
+                  const isoPattern = /^\d{4}-\d{2}-\d{2}$/;
+                  if (!isoPattern.test(trimmed)) {
+                    alert("Неверный формат даты. Ожидается ГГГГ-ММ-ДД.");
+                    return;
+                  }
+                  setFromISO(trimmed);
+                  if (toISO && trimmed > toISO) setToISO(trimmed);
+                  return;
+                }
+                setPickerMode("from");
+              }}
+            >
               <Text style={styles.filterBtnText} numberOfLines={1}>
                 {fromISO ? `С: ${formatRuDate(fromISO)}` : "С даты"}
               </Text>
             </Pressable>
 
-            <Pressable style={styles.filterBtn} onPress={() => setPickerMode("to")}>
+            <Pressable
+              style={styles.filterBtn}
+              onPress={() => {
+                if (Platform.OS === "web") {
+                  const current = toISO ?? fromISO ?? "";
+                  const input = window.prompt(
+                    "Введите дату окончания в формате ГГГГ-ММ-ДД",
+                    current
+                  );
+                  if (!input) return;
+                  const trimmed = input.trim();
+                  const isoPattern = /^\d{4}-\d{2}-\d{2}$/;
+                  if (!isoPattern.test(trimmed)) {
+                    alert("Неверный формат даты. Ожидается ГГГГ-ММ-ДД.");
+                    return;
+                  }
+                  setToISO(trimmed);
+                  if (fromISO && trimmed < fromISO) setFromISO(trimmed);
+                  return;
+                }
+                setPickerMode("to");
+              }}
+            >
               <Text style={styles.filterBtnText} numberOfLines={1}>
                 {toISO ? `По: ${formatRuDate(toISO)}` : "По дату"}
               </Text>
@@ -328,7 +372,7 @@ export default function StatsTab() {
       />
 
         {/* Date picker */}
-        {pickerMode && (
+      {Platform.OS !== "web" && pickerMode && (
           <DateTimePicker
             value={isoToDate((pickerMode === "from" ? fromISO : toISO) ?? toISODateLocal(new Date()))}
             mode="date"
