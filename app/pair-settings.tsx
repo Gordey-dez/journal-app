@@ -191,10 +191,21 @@ export default function PairSettingsScreen() {
           contentContainerStyle={{ paddingBottom: 16 }}
           renderItem={({ item, index }) => (
             <View style={[styles.card, isCompactWeb && styles.cardCompact]}>
-              <Text style={[styles.pairLabel, isCompactWeb && styles.pairLabelCompact]}>
-                Пара {index + 1}
-              </Text>
-              <View style={styles.row}>
+              <View style={styles.cardHeaderRow}>
+                <Text style={[styles.pairLabel, isCompactWeb && styles.pairLabelCompact]}>
+                  Пара {index + 1}
+                </Text>
+                <Pressable
+                  onPress={() => confirmDelete(index)}
+                  style={styles.trashBtn}
+                  hitSlop={10}
+                  accessibilityLabel={`Удалить пару ${index + 1}`}
+                >
+                  <Ionicons name="trash-outline" size={20} color={colors.danger} />
+                </Pressable>
+              </View>
+
+              <View style={styles.timeRow}>
                 <TextInput
                   value={item.start}
                   onChangeText={(v) => updatePair(index, "start", v)}
@@ -212,9 +223,6 @@ export default function PairSettingsScreen() {
                   placeholderTextColor={colors.muted}
                   keyboardType="numeric"
                 />
-                <Pressable onPress={() => confirmDelete(index)} style={styles.trashBtn} hitSlop={10}>
-                  <Ionicons name="trash-outline" size={22} color={colors.danger} />
-                </Pressable>
               </View>
             </View>
           )}
@@ -253,9 +261,10 @@ const styles = StyleSheet.create({
   headerRightText: { color: colors.text, fontWeight: "800", fontSize: 13 },
   card: { backgroundColor: colors.card, borderRadius: 14, padding: 14, marginBottom: 10 },
   cardCompact: { padding: 10, borderRadius: 12, marginBottom: 8 },
-  pairLabel: { color: colors.text, fontSize: 16, fontWeight: "700", marginBottom: 10 },
-  pairLabelCompact: { fontSize: 14, marginBottom: 8 },
-  row: { flexDirection: "row", alignItems: "center" },
+  cardHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 },
+  pairLabel: { color: colors.text, fontSize: 16, fontWeight: "700" },
+  pairLabelCompact: { fontSize: 14 },
+  timeRow: { flexDirection: "row", alignItems: "center" },
   timeInput: {
     flexGrow: 1,
     flexShrink: 1,
@@ -274,7 +283,7 @@ const styles = StyleSheet.create({
   timeInputCompact: { paddingHorizontal: 10, paddingVertical: 8, fontSize: 14, borderRadius: 10 },
   dash: { color: colors.muted, marginHorizontal: 8, fontSize: 18 },
   dashCompact: { marginHorizontal: 6, fontSize: 16 },
-  trashBtn: { marginLeft: 10, padding: 6, flexShrink: 0 },
+  trashBtn: { padding: 6, flexShrink: 0 },
   bottomRow: { flexDirection: "row", gap: 10 },
   secondaryBtn: { flex: 1, backgroundColor: "#111", borderRadius: 14, paddingVertical: 14, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8, borderWidth: 1, borderColor: "#222" },
   secondaryText: { color: colors.text, fontWeight: "700" },
