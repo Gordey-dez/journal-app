@@ -10,6 +10,8 @@ import {
   Text,
   TextInput,
   View,
+  Platform,
+  useWindowDimensions,
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -40,6 +42,8 @@ export default function PairSettingsScreen() {
   const router = useRouter();
   const { isReady, pairSettings, savePairSettings } = useAppData();
   const { confirm, toast } = useOverlay(); // Подключаем оверлеи
+  const { width } = useWindowDimensions();
+  const isCompactWeb = Platform.OS === "web" && width < 420;
 
   const [draft, setDraft] = useState<PairSetting[]>(pairSettings);
 
@@ -186,22 +190,24 @@ export default function PairSettingsScreen() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingBottom: 16 }}
           renderItem={({ item, index }) => (
-            <View style={styles.card}>
-              <Text style={styles.pairLabel}>Пара {index + 1}</Text>
+            <View style={[styles.card, isCompactWeb && styles.cardCompact]}>
+              <Text style={[styles.pairLabel, isCompactWeb && styles.pairLabelCompact]}>
+                Пара {index + 1}
+              </Text>
               <View style={styles.row}>
                 <TextInput
                   value={item.start}
                   onChangeText={(v) => updatePair(index, "start", v)}
-                  style={styles.timeInput}
+                  style={[styles.timeInput, isCompactWeb && styles.timeInputCompact]}
                   placeholder="09:00"
                   placeholderTextColor={colors.muted}
                   keyboardType="numeric"
                 />
-                <Text style={styles.dash}>—</Text>
+                <Text style={[styles.dash, isCompactWeb && styles.dashCompact]}>—</Text>
                 <TextInput
                   value={item.end}
                   onChangeText={(v) => updatePair(index, "end", v)}
-                  style={styles.timeInput}
+                  style={[styles.timeInput, isCompactWeb && styles.timeInputCompact]}
                   placeholder="10:30"
                   placeholderTextColor={colors.muted}
                   keyboardType="numeric"
@@ -246,10 +252,14 @@ const styles = StyleSheet.create({
   },
   headerRightText: { color: colors.text, fontWeight: "800", fontSize: 13 },
   card: { backgroundColor: colors.card, borderRadius: 14, padding: 14, marginBottom: 10 },
+  cardCompact: { padding: 10, borderRadius: 12, marginBottom: 8 },
   pairLabel: { color: colors.text, fontSize: 16, fontWeight: "700", marginBottom: 10 },
+  pairLabelCompact: { fontSize: 14, marginBottom: 8 },
   row: { flexDirection: "row", alignItems: "center" },
   timeInput: { flex: 1, backgroundColor: "#0f0f0f", borderRadius: 12, paddingHorizontal: 12, paddingVertical: 10, color: colors.text, borderWidth: 1, borderColor: "#222", textAlign: "center", fontSize: 16 },
+  timeInputCompact: { paddingHorizontal: 10, paddingVertical: 8, fontSize: 14, borderRadius: 10 },
   dash: { color: colors.muted, marginHorizontal: 8, fontSize: 18 },
+  dashCompact: { marginHorizontal: 6, fontSize: 16 },
   trashBtn: { marginLeft: 10, padding: 6 },
   bottomRow: { flexDirection: "row", gap: 10 },
   secondaryBtn: { flex: 1, backgroundColor: "#111", borderRadius: 14, paddingVertical: 14, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8, borderWidth: 1, borderColor: "#222" },
